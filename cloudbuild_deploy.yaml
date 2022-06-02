@@ -1,0 +1,41 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    entrypoint: /bin/bash
+    args:
+    - -c
+    - |
+      docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/web-build-repo/httpd:$BUILD_ID -f ./Dockerfile . &&
+      docker image inspect us-central1-docker.pkg.dev/$PROJECT_ID/web-build-repo/httpd:$BUILD_ID --format \
+      '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
+      cat image-digest.txt
+  - id: scan
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: sh
+    args: ['-c','gcloud artifacts docker images scan --location=us --format="value(response.scan)" us-central1-docker.pkg.dev/$PROJECT_ID/web-build-repo/httpd:$BUILD_ID > scan_id.txt' ]
+  - id: severity check
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    script: |
+      #!/usr/bin/env bash
+      gcloud artifacts docker images list-vulnerabilities $(cat /workspace/scan_id.txt) > /workspace/results.txt
+      cat /workspace/results.txt
+      if [[ $(wc -l </workspace/results.txt) -ge 1 ]]
+        then echo 'Failed vulnerability check';
+        cat results.txt && exit 1;
+      fi
+  
+images: ['us-central1-docker.pkg.dev/$PROJECT_ID/web-build-repo/httpd:$BUILD_ID']
