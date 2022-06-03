@@ -61,17 +61,26 @@ gcloud artifacts repositories create http-build-repo --repository-format=docker 
 ```bash
 cat << EOF > Dockerfile
 FROM httpd:alpine
+
 EOF
 ```
-1. Add the change to your repository:
+4. Add the change to your repository:
 ``` bash
 git add --all
 git commit -m"submitting a container for deployment"
 git push origin test-deploy
 ```
-1. From the github console create a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request), make sure the base is your local main branch and not the forked one.
+5. From the github console create a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request), make sure the base is your local main branch and not the forked one.
 1. The build should fail
-`# RUN apk add --upgrade apr`
-1. commit the changes to the branch
-1. Verify the build passes 
-1. Merge to main the cloud build should run and push a registry
+1. Add the patching
+```
+echo "RUN apk add --upgrade apr" >> Dockerfile
+```
+8. commit the changes to the branch 
+``` bash
+git add --all
+git commit -m"Patching container"
+git push origin test-deploy
+```
+9. Verify the build passes 
+1. [Merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/merging-a-pull-request) to the main branch the cloud build should run and push a registry 
