@@ -37,5 +37,4 @@ steps:
         then echo 'Failed vulnerability check';
         cat results.txt && exit 1;
       fi
-  
-images: ['us-central1-docker.pkg.dev/$PROJECT_ID/web-build-repo/httpd:$BUILD_ID']
+
