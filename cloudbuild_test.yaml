@@ -24,11 +24,11 @@ steps:
       '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
       cat image-digest.txt
   - id: scan
-    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: sh
     args: ['-c','gcloud artifacts docker images scan --location=us --format="value(response.scan)" us-central1-docker.pkg.dev/$PROJECT_ID/web-build-repo/httpd:$BUILD_ID > scan_id.txt' ]
   - id: severity check
-    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
     script: |
       #!/usr/bin/env bash
       gcloud artifacts docker images list-vulnerabilities $(cat /workspace/scan_id.txt) > /workspace/results.txt
