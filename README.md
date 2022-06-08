@@ -83,4 +83,4 @@ git commit -m"Patching container"
 git push origin test-deploy
 ```
 9. Verify the build passes 
-1. [Merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/merging-a-pull-request) to the main branch the cloud build should run and push a registry 
+1. [Merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/merging-a-pull-request) to the main branch the cloud build should run and push the image to artifact registry
