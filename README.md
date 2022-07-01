@@ -47,7 +47,7 @@ gcloud beta builds triggers create github \
 ```
 * Create an artifact repository:
 ```bash
-gcloud artifacts repositories create http-build-repo --repository-format=docker \
+gcloud artifacts repositories create web-build-repo --repository-format=docker \
 --location=us-central1 --description="Repository for scan and build"
 ```
 
